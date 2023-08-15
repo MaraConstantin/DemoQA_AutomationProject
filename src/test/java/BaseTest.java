@@ -1,11 +1,9 @@
-import constants.Constants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -14,18 +12,28 @@ public class BaseTest {
     @BeforeMethod
     public void setup() {
         driver= new ChromeDriver();
-        driver.get(Constants.URL);
-        driver.manage().window().maximize();
-    }
-
-    @AfterMethod
-    public void closeDriver() {
-        driver.close();
+        driver.get("https://demoqa.com/");
     }
 
     @Test
-    public void goToWebsiteTest() {
-        driver.get(Constants.URL);
+    public void logInTest() throws InterruptedException {
+        Thread.sleep(1000);
+        WebElement element = driver.findElement(By.xpath("(//*[@class='card-up'])[6]"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+        driver.findElement(By.xpath("(//*[@class='card-up'])[6]")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.cssSelector("#login")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.cssSelector("#userName")).sendKeys("Mara2010");
+        driver.findElement(By.cssSelector("#password")).sendKeys("Pass123*#");
+        driver.findElement(By.cssSelector("#login")).click();
+        Thread.sleep(1000);
+        String expectedMessage = "Mara2010";
+        String actualMessage = driver.findElement(By.cssSelector("#userName-value")).getText();
+        Assert.assertEquals(actualMessage, expectedMessage, "Error: The username is not present.");
+
+        driver.close();
+
     }
 
 }
